@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#201719">
+  <meta name="color-scheme" content="dark">
+  <title>Elturel in Avernus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="seal" viewBox="0 0 48 48"><path d="M24 1v46M1 24h46M8 8l32 32M8 40 40 8"/><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="11"/><path d="M24 3l4 17 17 4-17 4-4 17-4-17-17-4 17-4Z"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="walk" viewBox="0 0 24 24"><circle cx="14" cy="4.3" r="1.7"/><path d="m8 12 2-4 3-1 2 4 4 2m-7-3-1 6-4 6m4-7 4 3 1 4"/></symbol>
+    <symbol id="iso" viewBox="0 0 24 24"><path d="m2 9 10-6 10 6-10 6Zm0 4 10 6 10-6m-20 4 10 6 10-6"/></symbol>
+    <symbol id="map" viewBox="0 0 24 24"><path d="m2.5 5 6-2 7 3 6-2v15l-6 2-7-3-6 2Zm6-2v15m7-12v15"/></symbol>
+    <symbol id="bag" viewBox="0 0 24 24"><path d="M3 7V5h7l2 2h9v3M3 8v12h16l3-10H7l-3 8"/></symbol>
+    <symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="lightbulb" viewBox="0 0 24 24"><path d="M8 17h8m-7 3h6M8 17c0-2-3-2.5-3-6a7 7 0 0 1 14 0c0 3.5-3 4-3 6"/><path d="M10 12l2 2 2-2m-2 2v3"/></symbol>
+    <symbol id="download" viewBox="0 0 24 24"><path d="M12 2v14m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+  </defs></svg>
+  <canvas id="viewport" tabindex="0" aria-label="Elturel explorer"></canvas>
+  <main id="title">
+    <header class="title-top"><span><svg><use href="#seal"/></svg> FIELD ATLAS</span><span>THE FIRST HELL</span></header>
+    <div class="title-body">
+      <div class="section-rule"></div>
+      <h1>Elturel</h1>
+      <p>IN AVERNUS</p>
+      <div class="title-actions">
+        <button id="start" class="primary" disabled>Preparing Elturel <svg><use href="#arrow"/></svg></button>
+        <button id="continue" hidden disabled>Resume journey <svg><use href="#arrow"/></svg></button>
+        <button id="titleLoad"><svg><use href="#bag"/></svg> Load save file</button>
+      </div>
+      <p id="bootError" hidden></p>
+    </div>
+    <footer class="title-bottom"><span>Descent into Avernus</span><button id="notes">Field notes <span aria-hidden="true">↗</span></button></footer>
+  </main>
+  <div id="hud" hidden>
+    <header class="hud-top">
+      <div class="plate" id="localPlate"><svg><use href="#seal"/></svg><div><small id="regionName">ELTUREL</small><strong id="placeName">Dock District</strong><span id="elevation"></span></div></div>
+      <nav class="bar modebar" aria-label="Camera view">
+        <button data-mode="walk" aria-pressed="true" title="First person (1)"><svg><use href="#walk"/></svg><span>First person</span></button>
+        <button data-mode="iso" aria-pressed="false" title="Isometric (2)"><svg><use href="#iso"/></svg><span>Isometric</span></button>
+        <button data-mode="top" aria-pressed="false" title="Top-down (3)"><svg><use href="#map"/></svg><span>Top-down</span></button>
+      </nav>
+      <div class="bar top-tools">
+        <button id="lightToggle" aria-pressed="false" title="Portable light (T)"><svg><use href="#lightbulb"/></svg><span>Light</span></button>
+        <button id="lightSettings" title="Lighting, weather and sight"><span id="timeLabel">Cinderlight</span><span aria-hidden="true">⌄</span></button>
+        <button id="menuOpen" title="Journey menu (Esc)" aria-label="Journey menu"><svg><use href="#menu"/></svg></button>
+      </div>
+    </header>
+    <aside id="minimap">
+      <header><span id="miniMapTitle">ELTUREL</span><span id="miniNorth">↑ N</span></header>
+      <button id="miniOpen" title="Open area map"><canvas id="miniCanvas" width="346" height="239" aria-label="Location minimap"></canvas></button>
+      <footer><button id="miniMapButton">Open map <kbd>M</kbd></button><button id="miniHide" aria-label="Hide minimap">×</button></footer>
+    </aside>
+    <canvas id="surveyCanvas" aria-hidden="true" hidden></canvas>
+    <div id="crosshair" aria-hidden="true"><i></i></div>
+    <button id="interact" hidden></button>
+    <div class="survey-tools bar" id="surveyTools" hidden>
+      <label for="gridStyle">Grid</label><select id="gridStyle" aria-label="Survey grid"></select>
+      <button id="ruler" aria-pressed="false">Ruler</button><button id="clearRuler" hidden>Clear</button>
+      <button id="rotateLeft" title="Rotate left 15 degrees" aria-label="Rotate left 15 degrees">↶</button>
+      <button id="rotateRight" title="Rotate right 15 degrees" aria-label="Rotate right 15 degrees">↷</button>
+      <button id="align" title="Align the nearest building to your survey grid">Align building</button>
+      <button id="north" title="Restore north up" aria-label="Restore north up">N ↑</button>
+    </div>
+    <div id="gridNote" hidden>Zoom in to resolve this grid.</div>
+    <footer class="hud-bottom">
+      <div class="bar">
+        <button id="mapOpen"><svg><use href="#map"/></svg> Map <kbd>M</kbd></button>
+        <button id="miniToggle" aria-pressed="true">Minimap</button>
+        <button id="worldOpen">World</button>
+        <button id="fly" aria-pressed="false">Fly <kbd>F</kbd></button>
+        <button id="exportOpen" hidden><svg><use href="#download"/></svg> VTT export</button>
+      </div>
+      <span id="status"></span>
+      <div class="bar" id="lookTools"><button id="cursor" title="Toggle mouse look (V)">Mouse look <kbd>V</kbd></button></div>
+      <div class="bar" id="zoomTools" hidden><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button></div>
+    </footer>
+  </div>
+  <div id="veil" hidden>
+    <section id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <header><svg aria-hidden="true"><use href="#seal"/></svg><h2 id="dialogTitle"></h2><button id="close" aria-label="Close dialog">×</button></header>
+      <div id="dialogBody"></div>
+    </section>
+  </div>
+  <div id="toast" role="status" hidden></div>
+  <input id="saveFile" type="file" accept="application/json,.json" hidden>
+  <script src="vendor/three.min.js"></script>
+  <script src="assets/materials.js"></script>
+  <script src="assets/rose-glass.js"></script>
+  <script src="land.js"></script>
+  <script src="atmosphere.js"></script>
+  <script src="flyovers.js"></script>
+  <script src="badlands.js"></script>
+  <script src="world.js"></script>
+  <script src="survey.js"></script>
+  <script src="perception.js"></script>
+  <script src="explorer.js"></script>
+</body>
+</html>
+
